@@ -8,6 +8,22 @@
 
 <link type="text/css" rel="stylesheet" href="/css/zookeeper_dashboard.css" />
 <title>ZooKeeper Dashboard</title>
+<SCRIPT type="text/javascript" src="/js/http.js">
+</SCRIPT>
+<SCRIPT type="text/javascript">
+function action(id) {
+  var e = document.getElementById("action"+id);
+  var operation = e.options[e.selectedIndex].value;
+  var ip =
+  e.parentElement.parentElement.firstElementChild.firstElementChild.innerHTML; 
+
+  var url = operation + "?ip=" + ip; 
+  if (operation != "") {
+      httpGet(url);
+      location.reload();
+  }
+}
+</SCRIPT>
 </head>
 
 <body>
@@ -15,39 +31,34 @@
 <h1>ZooKeeper Dashboard</h1>
 <hr/>
 <div class="span-24 last">
-<h2>Cluster Information</h2>
+<h2>Idle Information</h2>
 
 <table>
-<tr><th>server</th><th>mode</th><th>#conn</th><th>version</th></tr>
-  {% for sd in server_data %}
-  <tr class="{% cycle 'oddrow' 'evenrow' %}"><td><a href="cluster/server/{{sd.id}}">{{ sd.host }}:{{ sd.port }}</a> </td><td> {% ifequal sd.mode "leader" %}<b>{% endifequal %} {{sd.mode|capfirst}} {% ifequal sd.mode "leader" %}</b>{% endifequal %} </td><td> {{ sd.sessions|length }} </td><td> {{ sd.version }}</td></tr>
+<tr><th>server</th><th>status</th><th>action</th></tr>
+{% for ip, status in idle_data.items %}
+<tr class="{% cycle 'oddrow' 'evenrow' %}">
+  <td><a href="cluster/idle/{{forloop.counter}}">{{ ip }}</a> </td>
+  <td>{{status}} </td>
+  <td>
+    <select id="action{{forloop.counter}}" onchange="action({{forloop.counter}})">
+      <option value=""></option>
+      <option value="deploy">deploy</option>
+      <option value="delete">delete</option>
+    </select>
+  </td>
+</tr>
   {% endfor %}
 </table>
 <p>
 </div>
 
 <hr/>
-
 <div class="span-24 last">
-<h2>ZNode Tree</h2>
-
-<a href="/tree">Root ZNode of the cluster</a>
-<p>
-</div>
-<hr/>
-<div class="span-24 last">
-<h2>Quota Definition</h2>
-
-Information on the current quota configuration
-
-<a href="/tree/zookeeper/quota">Quota</a>
-<p>
-</div>
-<hr/>
-<div class="span-24 last">
-<h2>Idle Cluster</h2>
-<a href="cluster/idle">Status Of Idle Machines</a>
-<p>
+<h2>Idle Add</h2>
+<form method="post">
+  {{idf.as_p}}
+  <input type="submit" value="submit" />
+</form>
 </div>
 <hr/>
 <div class="span-24 last small quiet">

@@ -1,6 +1,7 @@
 import re
 import StringIO
 import telnetlib
+from django.db import models
 
 OP_READ = 1
 OP_WRITE = 4
@@ -63,3 +64,10 @@ class ZKServer(object):
         tn.close()
 
         return result
+
+
+class Idle(models.Model):
+    ip = models.CharField(max_length=30)
+    user = models.CharField(max_length=30)
+    pwd = models.CharField(max_length=30)
+    path = models.CharField(max_length=30)

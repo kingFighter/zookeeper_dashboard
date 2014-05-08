@@ -1,0 +1,2 @@
+#!/bin/sh
+PYTHONPATH=lib.linux-x86_64-2.6 LD_LIBRARY_PATH=lib.linux-x86_64-2.6 ./manage.py runserver 103.6.221.209:8000

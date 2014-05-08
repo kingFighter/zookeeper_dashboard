@@ -22,4 +22,5 @@ urlpatterns = patterns('zookeeper_dashboard',
 if settings.DEBUG:
     urlpatterns += patterns('',
         (r'^css/(?P<path>.*)$', 'django.views.static.serve', {'document_root': './css'}),
+        (r'^js/(?P<path>.*)$', 'django.views.static.serve', {'document_root': './js'}),
     )
