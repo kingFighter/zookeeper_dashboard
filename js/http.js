@@ -22,7 +22,7 @@ function httpGet(url, isCallBack, callback) {
      isCallBack = false;
    if(typeof(callback) === 'undefined') 
      callback = null;
-  var xmlHttp = createXMLHttpRequest();  
+  xmlHttp = createXMLHttpRequest();  
   if (xmlHttp != null) {
     xmlHttp.open("GET", url, isCallBack);
     xmlHttp.onreadystatechange = callback;   

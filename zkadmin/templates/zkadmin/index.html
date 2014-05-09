@@ -18,9 +18,15 @@
 <h2>Cluster Information</h2>
 
 <table>
-<tr><th>server</th><th>mode</th><th>#conn</th><th>version</th></tr>
+  <tr><th>server</th><th>mode</th><th>#conn</th><th>version</th><th>action</th></tr>
   {% for sd in server_data %}
-  <tr class="{% cycle 'oddrow' 'evenrow' %}"><td><a href="cluster/server/{{sd.id}}">{{ sd.host }}:{{ sd.port }}</a> </td><td> {% ifequal sd.mode "leader" %}<b>{% endifequal %} {{sd.mode|capfirst}} {% ifequal sd.mode "leader" %}</b>{% endifequal %} </td><td> {{ sd.sessions|length }} </td><td> {{ sd.version }}</td></tr>
+  <tr class="{% cycle 'oddrow' 'evenrow' %}">
+    <td><a href="cluster/server/{{sd.id}}">{{ sd.host }}:{{ sd.port}}</a> </td>
+    <td> {% ifequal sd.mode "leader" %}<b>{% endifequal %}{{sd.mode|capfirst}} {% ifequal sd.mode "leader" %}</b>{% endifequal %} </td>
+    <td> {{ sd.sessions|length }} </td>
+    <td> {{ sd.version }}</td>
+    <td> <a href="cluster/server/delete?ip={{sd.host}}">delete</a></td>
+  </tr>
   {% endfor %}
 </table>
 <p>

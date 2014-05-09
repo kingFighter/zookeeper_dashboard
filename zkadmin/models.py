@@ -21,6 +21,7 @@ class Session(object):
 class ZKServer(object):
     def __init__(self, server):
         self.host, self.port = server.split(':')
+        print self.host, self.port
         try:
             stat = self.send_cmd('stat\n')
             envi = self.send_cmd('envi\n')
@@ -65,9 +66,15 @@ class ZKServer(object):
 
         return result
 
-
 class Idle(models.Model):
-    ip = models.CharField(max_length=30)
+    ip = models.IPAddressField(max_length=30)
     user = models.CharField(max_length=30)
     pwd = models.CharField(max_length=30)
     path = models.CharField(max_length=30)
+
+class Server(models.Model):
+    ip = models.IPAddressField(max_length=30)
+    port = models.CharField(max_length=30)
+
+    def __unicode__(self):
+        return self.ip + ":" + self.port

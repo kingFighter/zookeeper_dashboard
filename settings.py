@@ -2,6 +2,7 @@
 
 ### ZooKeeper specific settings
 
+# Useless now
 ZOOKEEPER_SERVERS = "103.6.221.215:2181,103.6.221.216:2181,103.6.221.217:2181"
 
 ### From here down are Django settings

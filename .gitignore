@@ -1,2 +1,3 @@
 *.py[co]
 cli_log.txt
+*.db

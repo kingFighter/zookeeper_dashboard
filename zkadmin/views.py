@@ -3,14 +3,28 @@ from django.conf import settings
 
 from django.http import HttpResponse
 from django import forms
-from zkadmin.models import Idle
+from zkadmin.models import Idle, Server
 import os
 from zookeeper_dashboard.zkadmin.models import ZKServer
+import logging  
+import shutil 
+import os
+import tempfile
 
-ZOOKEEPER_SERVERS = getattr(settings,'ZOOKEEPER_SERVERS').split(',')
+logging.basicConfig(filename = os.path.join(os.getcwd(), 'log.txt'), level = logging.DEBUG)  
+
+# ZOOKEEPER_SERVERS = getattr(settings,'ZOOKEEPER_SERVERS').split(',')
+
+def get_zookeeper_servers():
+    servers = Server.objects.all()
+    ZOOKEEPER_SERVERS = []
+    for server in servers:
+        ZOOKEEPER_SERVERS.append(server.ip.encode('ascii') + ":" + server.port.encode('ascii'))
+    return ZOOKEEPER_SERVERS
 
 def index(request):
     server_data = []
+    ZOOKEEPER_SERVERS = get_zookeeper_servers()
     for i, server in enumerate(ZOOKEEPER_SERVERS):
         zkserver = ZKServer(server)
         zkserver.id = i
@@ -21,6 +35,7 @@ def index(request):
                                'server_data':server_data})
 
 def detail(request, server_id):
+    ZOOKEEPER_SERVERS = get_zookeeper_servers()
     server_data = ZKServer(ZOOKEEPER_SERVERS[int(server_id)])
     server_data.id = server_id
     return render_to_response('zkadmin/detail.html',
@@ -87,5 +102,55 @@ def idleDelete(request):
     idf = IdleForm()
     return render_to_response('zkadmin/idle.html', {'idle_data': idle_data, 'idf': idf})
 
+
+# generate new config files
+# TODO: port and others are changeable
+def deployHelper():
+    path = '/home/kevin/Softwares/zookeeper-3.4.6/conf/'
+    src = os.path.join(path, 'zoo.cfg')
+    target = os.path.join(path, 'zoo.cfg_backup')
+    tmp = tempfile.mktemp()
+    shutil.copyfile(src, target)
+
+    servers = Server.objects.all()
+    count = 0
+    fr = open(src, 'r')
+    fw = open(tmp, 'w')
+    
+    for line in fr:
+        if line.find('server') != -1 and count == 0:
+            count += 1
+            for server in servers:
+                fw.write('server.' + str(count) + "=" + server.ip + ":4444:4445\n")
+                count += 1
+        elif line.find('server') == -1:
+            fw.write(line)
+
+    fr.close()
+    fw.close()
+    shutil.copyfile(tmp, src)
+
+# TODO: deal with failure
+# TODO: make port changeable
+# TODO: security
+# idleDeploy and serverDelete response should be consistent
 def idleDeploy(request):
+    t = Idle.objects.all()
     ip = request.GET.get('ip')
+    idle_m = Idle.objects.filter(ip = ip)
+    logging.debug('idleDeploy %s', idle_m[0].ip)
+
+    server = Server(ip=idle_m[0].ip, port="2181")
+    server.save()
+    idle_m[0].delete()
+    deployHelper()
+    return HttpResponse("OK")
+
+# TODO: deal with failure
+def serverDelete(request):
+    ip = request.GET.get('ip')
+    server_m = Server.objects.filter(ip=ip)
+    server_m[0].delete()
+    deployHelper()
+    return HttpResponse("<script>location = location.href.substr(0, 25)</script>")
+

@@ -11,6 +11,33 @@
 <SCRIPT type="text/javascript" src="/js/http.js">
 </SCRIPT>
 <SCRIPT type="text/javascript">
+function deploy(url, isCallBack) {
+  xmlHttp = createXMLHttpRequest();  
+  if (xmlHttp != null) {
+    xmlHttp.open("GET", url, isCallBack);
+    xmlHttp.onreadystatechange = function() {
+      if (xmlHttp.readyState == 4) {
+      // 4 = "loaded"
+        if (xmlHttp.status == 200) {
+        // 200 = OK
+          if (xmlHttp.responseText == "OK") {
+            var str = location.href;
+            document.body.innerHTML = "<h1>OK</h1><h2>And will be redirected to Homepage after <b>3s</b></h2>";
+            setTimeout(function(){ location.href = str.substr(0, str.length-14);},3000);
+          }
+          
+        }
+      } else {
+        //alert("Problem retrieving XML data");
+      }
+    }
+    xmlHttp.setRequestHeader("Content-Type",  
+                             "application/x-www-form-urlencoded;");  
+    xmlHttp.send();
+  } else {
+    alert("Your browser does not support XMLHTTP");
+  }
+}
 function action(id) {
   var e = document.getElementById("action"+id);
   var operation = e.options[e.selectedIndex].value;
@@ -18,9 +45,11 @@ function action(id) {
   e.parentElement.parentElement.firstElementChild.firstElementChild.innerHTML; 
 
   var url = operation + "?ip=" + ip; 
-  if (operation != "") {
-      httpGet(url);
-      location.reload();
+  if (operation == "delete") {
+       httpGet(url);
+       location.reload();
+  } else if (operation == "deploy") {
+       deploy(url, true)
   }
 }
 </SCRIPT>

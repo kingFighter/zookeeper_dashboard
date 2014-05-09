@@ -4,6 +4,8 @@ from datetime import datetime
 import threading
 import zookeeper
 
+from zookeeper_dashboard.zkadmin.models import Server
+
 PERM_READ = 1
 PERM_WRITE = 2
 PERM_CREATE = 4
@@ -51,10 +53,18 @@ class ZKClient(object):
     def get_acls(self, path):
         return zookeeper.get_acl(self.handle, path)
 
-ZOOKEEPER_SERVERS = getattr(settings,'ZOOKEEPER_SERVERS')
+def get_zookeeper_servers():
+    servers = Server.objects.all()
+    ZOOKEEPER_SERVERS = ""
+    for server in servers:
+        ZOOKEEPER_SERVERS += (server.ip.encode('ascii') + ":" + server.port.encode('ascii') + ",")
+
+    ZOOKEEPER_SERVERS = ZOOKEEPER_SERVERS[:len(ZOOKEEPER_SERVERS) - 1]
+    return ZOOKEEPER_SERVERS
 
 class ZNode(object):
     def __init__(self, path="/"):
+        ZOOKEEPER_SERVERS = get_zookeeper_servers()
         self.path = path
         zk = ZKClient(ZOOKEEPER_SERVERS, TIMEOUT)
         try:
