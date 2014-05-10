@@ -1,3 +1,7 @@
 *.py[co]
 cli_log.txt
 *.db
+hostsetting.py
+*.cfg
+log.txt
+myid

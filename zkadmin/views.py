@@ -10,6 +10,7 @@ import logging
 import shutil 
 import os
 import tempfile
+from subprocess import call
 
 logging.basicConfig(filename = os.path.join(os.getcwd(), 'log.txt'), level = logging.DEBUG)  
 
@@ -26,6 +27,7 @@ def index(request):
     server_data = []
     ZOOKEEPER_SERVERS = get_zookeeper_servers()
     for i, server in enumerate(ZOOKEEPER_SERVERS):
+        print i, server
         zkserver = ZKServer(server)
         zkserver.id = i
         server_data.append(zkserver)
@@ -105,8 +107,10 @@ def idleDelete(request):
 
 # generate new config files
 # TODO: port and others are changeable
-def deployHelper():
-    path = '/home/kevin/Softwares/zookeeper-3.4.6/conf/'
+def deployHelper(action, server_data=None):
+    print 'deployHelper', action
+    # path = '/home/kevin/Softwares/zookeeper-3.4.6/conf/'
+    path = ''
     src = os.path.join(path, 'zoo.cfg')
     target = os.path.join(path, 'zoo.cfg_backup')
     tmp = tempfile.mktemp()
@@ -129,6 +133,27 @@ def deployHelper():
     fr.close()
     fw.close()
     shutil.copyfile(tmp, src)
+    
+    count = 0
+    for server in servers:
+        count += 1
+        fw = open('hostsetting.py', 'w')
+        fw.write('host = "' + server.user + "@" + server.ip + '"\n')
+        fw.write('password = "' + server.pwd + '"\n')
+        fw.write('path = "' + server.path + '"\n')
+        print 'id = ', str(count)
+        fw.write('id = ' + str(count) + '\n')
+        fw.close()
+        call(["fab", 'add'])
+    
+    if action ==  'delete':
+        fw = open('hostsetting.py', 'w')
+        fw.write('host = "' + server_data['user'] + "@" + server_data['ip'] + '"\n')
+        fw.write('password = "' + server_data['pwd'] + '"\n')
+        fw.write('path = "' + server_data['path'] + '"\n')
+        fw.close()
+        call(['fab', 'delete'])
+        
 
 # TODO: deal with failure
 # TODO: make port changeable
@@ -139,18 +164,30 @@ def idleDeploy(request):
     ip = request.GET.get('ip')
     idle_m = Idle.objects.filter(ip = ip)
     logging.debug('idleDeploy %s', idle_m[0].ip)
-
-    server = Server(ip=idle_m[0].ip, port="2181")
+    
+    server_m = Server.objects.filter(ip=ip)
+    if server_m:
+        return HttpResponse("OK")
+    
+    server = Server(ip=idle_m[0].ip, port="2181", user=idle_m[0].user, pwd=idle_m[0].pwd, path=idle_m[0].path)
     server.save()
     idle_m[0].delete()
-    deployHelper()
+    print "idleDeploy deployed"
+    deployHelper('add')
     return HttpResponse("OK")
 
 # TODO: deal with failure
 def serverDelete(request):
     ip = request.GET.get('ip')
     server_m = Server.objects.filter(ip=ip)
+    server = {}
+    server['user'] = server_m[0].user
+    server['ip'] = server_m[0].ip
+    server['pwd'] = server_m[0].pwd
+    server['path'] = server_m[0].path
     server_m[0].delete()
-    deployHelper()
+
+    deployHelper('delete', server)
+    print 'serverDelete done'
     return HttpResponse("<script>location = location.href.substr(0, 25)</script>")
 

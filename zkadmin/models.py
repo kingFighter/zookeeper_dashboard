@@ -34,7 +34,8 @@ class ZKServer(object):
         sio = StringIO.StringIO(stat)
         line = sio.readline()
         m = re.search('.*: (\d+\.\d+\.\d+)-.*', line)
-        self.version = m.group(1)
+        if m != None:
+            self.version = m.group(1)
         sio.readline()
         self.sessions = []
         for line in sio:
@@ -75,6 +76,9 @@ class Idle(models.Model):
 class Server(models.Model):
     ip = models.IPAddressField(max_length=30)
     port = models.CharField(max_length=30)
+    user = models.CharField(max_length=30)
+    pwd = models.CharField(max_length=30)
+    path = models.CharField(max_length=30)
 
     def __unicode__(self):
         return self.ip + ":" + self.port
