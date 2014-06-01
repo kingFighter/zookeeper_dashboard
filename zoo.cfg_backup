@@ -13,7 +13,8 @@ dataDir=/home/kevin/Softwares/zookeeper-3.4.6/data
 # the port at which the clients will connect
 clientPort=2181
 server.1=103.6.221.217:4444:4445
-server.2=103.6.221.215:4444:4445
+server.2=103.6.221.216:4444:4445
+server.3=103.6.221.218:4444:4445
 # the maximum number of client connections.
 # increase this if you need to handle more clients
 #maxClientCnxns=60
