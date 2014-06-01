@@ -66,7 +66,7 @@ $('#myTab a').click(function (e) {
   </div>
 <div class="container">
 <div class="col-md-4">
-<h2>Children ({{znode.stat.numChildren}})</h2>
+<!-- <h2>Children ({{znode.stat.numChildren}})</h2> -->
 {% if znode.children %}
 <div class="list-group">
   {% for child in znode.children %}
@@ -79,62 +79,78 @@ No Children exist for this znode
 {% endif %}
 </div>
 <div class="col-md-4">    
-  <h1>ZooKeeper ZNode {{znode.path}}</h1>
+<div class="bs-example bs-example-tabs">
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active"><a href="#znode"
+      data-toggle="tab">ZNode</a></li>
+      <li class=""><a href="#stat"
+      data-toggle="tab">Stat</a></li>
+      <li class=""><a href="#acl"
+      data-toggle="tab">acl</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+      <div class="tab-pane fade active in" id="znode">
+        <h1>ZooKeeper ZNode {{znode.path}}</h1>
 
-  <hr/>
-  <div class="span-24 last">
-    Path : {{znode.path}}
-    <p>
+        <hr/>
+        <div class="span-24 last">
+          Path : {{znode.path}}
+          <p>
 
-      Data({{znode.datatype}}) : {{znode.data}}
-    <p>
+            Data({{znode.datatype}}) : {{znode.data}}
+          <p>
 
-  </div>
-  <hr/>
-  <div class="span-24 last">
-    <h2>Stat Information</h2>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="stat">
+        <div class="span-24 last">
+          <h2>Stat Information</h2>
 
-    <table>
-      <tr><td>czxid</td><td>0x{{znode.stat.czxid|stringformat:"x"}}</td></tr>
-      <tr><td>mzxid</td><td>0x{{znode.stat.mzxid|stringformat:"x"}}</td></tr>
-      <tr><td>ctime</td><td>{{znode.stat.ctime|date}} {{znode.stat.ctime|time}} ({{znode.stat.ctime|timesince}} ago)</td></tr>
-      <tr><td>mtime</td><td>{{znode.stat.mtime|date}} {{znode.stat.mtime|time}} ({{znode.stat.mtime|timesince}} ago)</td></tr>
-      <tr><td>version</td><td>{{znode.stat.version}}</td></tr>
-      <tr><td>cversion</td><td>{{znode.stat.cversion}}</td></tr>
-      <tr><td>aversion</td><td>{{znode.stat.aversion}}</td></tr>
-      {% ifnotequal znode.stat.ephemeralOwner 0 %}
-      <tr><td>ephemeralOwner</td><td>0x{{znode.stat.ephemeralOwner|stringformat:"x"}}</td></tr>
-      {% endifnotequal %}
-      <tr><td>dataLength</td><td>{{znode.stat.dataLength}}</td></tr>
-      <tr><td>pzxid</td><td>0x{{znode.stat.pzxid|stringformat:"x"}}</td></tr>
-    </table>
-    <a href="http://hadoop.apache.org/zookeeper/docs/current/zookeeperProgrammers.html#sc_zkStatStructure" class="doc">Details on Stat fields</a>
+          <table>
+            <tr><td>czxid</td><td>0x{{znode.stat.czxid|stringformat:"x"}}</td></tr>
+            <tr><td>mzxid</td><td>0x{{znode.stat.mzxid|stringformat:"x"}}</td></tr>
+            <tr><td>ctime</td><td>{{znode.stat.ctime|date}} {{znode.stat.ctime|time}} ({{znode.stat.ctime|timesince}} ago)</td></tr>
+            <tr><td>mtime</td><td>{{znode.stat.mtime|date}} {{znode.stat.mtime|time}} ({{znode.stat.mtime|timesince}} ago)</td></tr>
+            <tr><td>version</td><td>{{znode.stat.version}}</td></tr>
+            <tr><td>cversion</td><td>{{znode.stat.cversion}}</td></tr>
+            <tr><td>aversion</td><td>{{znode.stat.aversion}}</td></tr>
+            {% ifnotequal znode.stat.ephemeralOwner 0 %}
+            <tr><td>ephemeralOwner</td><td>0x{{znode.stat.ephemeralOwner|stringformat:"x"}}</td></tr>
+            {% endifnotequal %}
+            <tr><td>dataLength</td><td>{{znode.stat.dataLength}}</td></tr>
+            <tr><td>pzxid</td><td>0x{{znode.stat.pzxid|stringformat:"x"}}</td></tr>
+          </table>
+          <a href="http://hadoop.apache.org/zookeeper/docs/current/zookeeperProgrammers.html#sc_zkStatStructure" class="doc">Details on Stat fields</a>
 
-    <p>
-  </div>
-  <hr/>
-  <div class="span-24 last">
-    <h2>ACL Information</h2>
+          <p>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="acl">
+        <div class="span-24 last">
+          <h2>ACL Information</h2>
 
-    {% if znode.acls %}
-    ACLs ({{znode.acls|length}})
-    <table>
-      <tr><th>scheme</th><th>id</th><th>perms</th></tr>
-      {% for acl in znode.acls %}
-      <tr><td>{{acl.scheme}}</td><td>{{acl.id}}</td><td>
-          {% for perm in acl.perm_list %}
-          {% if not forloop.first %}, {% endif %}
-          {{perm}}
-          {% endfor %}
-      </td></tr>
-      {% endfor %}
-    </table>
-    <a href="http://hadoop.apache.org/zookeeper/docs/current/zookeeperProgrammers.html#sc_ZooKeeperAccessControl" class="doc">Details on ACLs</a>
-    {% else %}
-    No ACLs exist for this znode
-    {% endif %}
+          {% if znode.acls %}
+          ACLs ({{znode.acls|length}})
+          <table>
+            <tr><th>scheme</th><th>id</th><th>perms</th></tr>
+            {% for acl in znode.acls %}
+            <tr><td>{{acl.scheme}}</td><td>{{acl.id}}</td><td>
+                {% for perm in acl.perm_list %}
+                {% if not forloop.first %}, {% endif %}
+                {{perm}}
+                {% endfor %}
+            </td></tr>
+            {% endfor %}
+          </table>
+          <a href="http://hadoop.apache.org/zookeeper/docs/current/zookeeperProgrammers.html#sc_ZooKeeperAccessControl" class="doc">Details on ACLs</a>
+          {% else %}
+          No ACLs exist for this znode
+          {% endif %}
 
-    <p>
+          <p>
+        </div>
+      </div>
+    </div>
   </div>
   <hr/>
 </div>

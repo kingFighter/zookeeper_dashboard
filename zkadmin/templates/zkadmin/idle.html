@@ -1,136 +1,160 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html;
-                                         charset=iso-8859-15">
-<script src="/js/jquery-1.11.1.min.js"></script>
-<link rel="stylesheet" href="/css/blueprint/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/css/blueprint/print.css" type="text/css" media="print">	
-<!--[if lt IE 8]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+                                             charset=iso-8859-15">
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 
-<link type="text/css" rel="stylesheet"
-      href="/css/zookeeper_dashboard.css" />
-<link type="text/css" rel="stylesheet"
-      href="/css/bootstrap.css.map" />
-<link type="text/css" rel="stylesheet"
-      href="/css/bootstrap-theme.css" />
-<link type="text/css" rel="stylesheet"
-      href="/css/bootstrap-theme.min.css" />
-<link type="text/css" rel="stylesheet"
-      href="/css/bootstrap.css" />
-<link type="text/css" rel="stylesheet"
-      href="/css/bootstrap.min.css" />
-<link type="text/css" rel="stylesheet"
-      href="/css/bootstrap-theme.css.map" />
-<link type="text/css" rel="stylesheet"
-      href="/css/bootstrap-responsive.css" />
-<title>ZooKeeper Dashboard</title>
-<SCRIPT type="text/javascript" src="/js/http.js">
-</SCRIPT>
-<SCRIPT type="text/javascript">
-function deploy(url, isCallBack) {
-  xmlHttp = createXMLHttpRequest();  
-  if (xmlHttp != null) {
-    xmlHttp.open("GET", url, isCallBack);
-    xmlHttp.onreadystatechange = function() {
+    <script type="text/javascript">
+      $('button').on('click', function(){
+      alert('preserve attached java script data!');
+      });
+      $('#myTab a').click(function (e) {
+      e.preventDefault()
+      $(this).tab('show')
+      })
+    </script>
+    <link rel="stylesheet" href="/css/blueprint/screen.css" type="text/css" media="screen, projection">
+    <link rel="stylesheet" href="/css/blueprint/print.css" type="text/css" media="print">	
+    <!--[if lt IE 8]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+
+    <link type="text/css" rel="stylesheet"
+          href="/css/zookeeper_dashboard.css" />
+    <link type="text/css" rel="stylesheet"
+          href="/css/bootstrap.css.map" />
+    <link type="text/css" rel="stylesheet"
+          href="/css/bootstrap-theme.css" />
+    <link type="text/css" rel="stylesheet"
+          href="/css/bootstrap-theme.min.css" />
+    <link type="text/css" rel="stylesheet"
+          href="/css/bootstrap.css" />
+    <link type="text/css" rel="stylesheet"
+          href="/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet"
+          href="/css/bootstrap-theme.css.map" />
+    <link type="text/css" rel="stylesheet"
+          href="/css/bootstrap-responsive.css" />
+    <title>ZooKeeper Dashboard</title>
+    <SCRIPT type="text/javascript" src="/js/http.js">
+    </SCRIPT>
+    <SCRIPT type="text/javascript">
+      function deploy(url, isCallBack) {
+      xmlHttp = createXMLHttpRequest();  
+      if (xmlHttp != null) {
+      xmlHttp.open("GET", url, isCallBack);
+      xmlHttp.onreadystatechange = function() {
       if (xmlHttp.readyState == 4) {
       // 4 = "loaded"
-        if (xmlHttp.status == 200) {
-        // 200 = OK
-          if (xmlHttp.responseText == "OK") {
-            var str = location.href;
-            document.body.innerHTML = "<h1>OK</h1><h2>And will be redirected to Homepage after <b>3s</b></h2>";
-            setTimeout(function(){ location.href = str.substr(0, str.length-14);},3000);
-          }
-          
-        }
-      } else {
-        //alert("Problem retrieving XML data");
+      if (xmlHttp.status == 200) {
+      // 200 = OK
+      if (xmlHttp.responseText == "OK") {
+      var str = location.href;
+      document.body.innerHTML = "<h1>OK</h1><h2>And will be redirected to Homepage after <b>3s</b></h2>";
+      setTimeout(function(){ location.href = str.substr(0, str.length-14);},3000);
       }
-    }
-    xmlHttp.setRequestHeader("Content-Type",  
-                             "application/x-www-form-urlencoded;");  
-    xmlHttp.send();
-  } else {
-    alert("Your browser does not support XMLHTTP");
-  }
-}
-function action(id) {
-  var e = document.getElementById("action"+id);
-  var operation = e.options[e.selectedIndex].value;
-  var ip =
-  e.parentElement.parentElement.firstElementChild.firstElementChild.innerHTML; 
+      
+      }
+      } else {
+      //alert("Problem retrieving XML data");
+      }
+      }
+      xmlHttp.setRequestHeader("Content-Type",  
+      "application/x-www-form-urlencoded;");  
+      xmlHttp.send();
+      } else {
+      alert("Your browser does not support XMLHTTP");
+      }
+      }
+      function action(id) {
+      var e = document.getElementById("action"+id);
+      var operation = e.options[e.selectedIndex].value;
+      var ip =
+      e.parentElement.parentElement.firstElementChild.firstElementChild.innerHTML; 
 
-  var url = operation + "?ip=" + ip; 
-  if (operation == "delete") {
-       httpGet(url);
-       location.reload();
-  } else if (operation == "deploy") {
-       deploy(url, true)
-  }
-}
-</SCRIPT>
-</head>
+      var url = operation + "?ip=" + ip; 
+      if (operation == "delete") {
+      httpGet(url);
+      location.reload();
+      } else if (operation == "deploy") {
+      deploy(url, true)
+      }
+      }
+    </SCRIPT>
+<style>
+label { display: inline-block; width: 50px; text-align: left; }
+</style>
+  </head>
 
-<body>
-  <div class="navbar navbar-default ">
-    <div class="container">
-      <div class="navbar-header">
-        <a href="/" class="navbar-brand">ZooKeeper Dashboard</a>
-      </div>
-      <div class="navbar-collapse collapse" id="navbar-main">
-        <ul class="nav navbar-nav">
-          <li>
-            <a href="/">Clusters</a>
-          </li>
-          <li>
-            <a href="/tree">ZNode Tree</a>
-          </li>
-          <li>
-            <a href="/tree/zookeeper/quota/">Quota</a>
-          </li>
-          <li>
-            <a href="/cluster/idle/">Idles</a>
-          </li>
-        </ul>
+  <body>
+    <div class="navbar navbar-default ">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="/" class="navbar-brand">ZooKeeper Dashboard</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav">
+            <li>
+              <a href="/">Clusters</a>
+            </li>
+            <li>
+              <a href="/tree">ZNode Tree</a>
+            </li>
+            <li>
+              <a href="/tree/zookeeper/quota/">Quota</a>
+            </li>
+            <li>
+              <a href="/cluster/idle/">Idles</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
 
-<div class="container">
-<div class="span-24 last">
-<h2>Idle Information</h2>
+    <div class="container">
+      <div class="bs-example bs-example-tabs">
+        <ul id="myTab" class="nav nav-tabs">
+          <li class="active"><a href="#idle"
+                                data-toggle="tab">Idle</a></li>
+          <li><a href="#add" data-toggle="tab">Add</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+          <div class="tab-pane fade in active" id="idle">
+            <div class="span-24 last">
+              <!-- <h2>Idle Information</h2> -->
 
-<table>
-<tr><th>server</th><th>status</th><th>action</th></tr>
-{% for ip, status in idle_data.items %}
-<tr class="{% cycle 'oddrow' 'evenrow' %}">
-  <td><a href="cluster/idle/{{forloop.counter}}">{{ ip }}</a> </td>
-  <td>{{status}} </td>
-  <td>
-    <select id="action{{forloop.counter}}" onchange="action({{forloop.counter}})">
-      <option value=""></option>
-      <option value="deploy">deploy</option>
-      <option value="delete">delete</option>
-    </select>
-  </td>
-</tr>
-  {% endfor %}
-</table>
-<p>
-</div>
-
-<hr/>
-<div class="span-24 last">
-<h2>Idle Add</h2>
-<form method="post">
-  {{idf.as_p}}
-  <input type="submit" value="submit" />
-</form>
-</div>
-<hr/>
-<div class="span-24 last small quiet">
-</div>
-</div>
-
-</body></html>
+              <table>
+                <tr><th>server</th><th>status</th><th>action</th></tr>
+                {% for ip, status in idle_data.items %}
+                <tr class="{% cycle 'oddrow' 'evenrow' %}">
+                  <td><a href="cluster/idle/{{forloop.counter}}">{{ ip }}</a> </td>
+                  <td>{{status}} </td>
+                  <td>
+                    <select id="action{{forloop.counter}}" onchange="action({{forloop.counter}})">
+                      <option value=""></option>
+                      <option value="deploy">deploy</option>
+                      <option value="delete">delete</option>
+                    </select>
+                  </td>
+                </tr>
+                {% endfor %}
+              </table>
+              <p>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="add">
+            <div class="span-24 last">
+              <!-- <h2>Idle Add</h2> -->
+              <form method="post">
+                {{idf.as_p}}
+                <input type="submit" value="submit" class="btn btn-default"/>
+              </form>
+            </div>
+            <hr/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -4,6 +4,18 @@
 <meta http-equiv="Content-Type" content="text/html;
                                          charset=iso-8859-15">
 <script src="/js/jquery-1.11.1.min.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    $('button').on('click', function(){
+        alert('preserve attached java script data!');
+    });
+$('#myTab a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
+</script>
 <link rel="stylesheet" href="/css/blueprint/screen.css" type="text/css" media="screen, projection">
 <link rel="stylesheet" href="/css/blueprint/print.css" type="text/css" media="print">	
 <!--[if lt IE 8]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
@@ -55,46 +67,60 @@
 <div class="container">
 <h1>ZooKeeper Server {{server_data.host}}:{{server_data.port}}</h1>
 <hr/>
-<div class="span-24 last">
-<h2>Summary</h2>
+<div class="bs-example bs-example-tabs">
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active"><a href="#summary"
+      data-toggle="tab">Summary</a></li>
+      <li><a href="#connections"
+      data-toggle="tab">Connections</a></li>
+      <li><a href="#environment" data-toggle="tab">Environment</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+      <div class="tab-pane fade in active" id="summary">
+        <div class="span-24 last">
+          <!-- <h2>Summary</h2> -->
+          <table class="server_summary">
+            <tr><td>Host</td><td>{{server_data.host}}</td></tr>
+            <tr><td>Client port</td><td>{{server_data.port}}</td></tr>
+            <tr><td>Mode</td><td>{{server_data.mode|capfirst}}</td></tr>
+            <tr><td>Zxid</td><td>{{server_data.zxid}}</td></tr>
+            <tr><td>Node count</td><td>{{server_data.node_count}}</td></tr>
+            <tr><td>Connection count</td><td>{{server_data.sessions|length}}</td></tr>
+            <tr><td>Received</td><td>{{server_data.received}}</td></tr>
+            <tr><td>Sent</td><td>{{server_data.sent}}</td></tr>
+            <tr><td>Outstanding</td><td>{{server_data.outstanding}}</td></tr>
+            <tr><td>Max Latency</td><td>{{server_data.max_latency}}</td></tr>
+            <tr><td>Avg Latency</td><td>{{server_data.avg_latency}}</td></tr>
+            <tr><td>Min Latency</td><td>{{server_data.min_latency}}</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="connections">
+        <div class="span-24 last">
+          <!-- <h2>Connections (clients)</h2> -->
 
-<table class="server_summary">
-  <tr><td>Host</td><td>{{server_data.host}}</td></tr>
-  <tr><td>Client port</td><td>{{server_data.port}}</td></tr>
-  <tr><td>Mode</td><td>{{server_data.mode|capfirst}}</td></tr>
-  <tr><td>Zxid</td><td>{{server_data.zxid}}</td></tr>
-  <tr><td>Node count</td><td>{{server_data.node_count}}</td></tr>
-  <tr><td>Connection count</td><td>{{server_data.sessions|length}}</td></tr>
-  <tr><td>Received</td><td>{{server_data.received}}</td></tr>
-  <tr><td>Sent</td><td>{{server_data.sent}}</td></tr>
-  <tr><td>Outstanding</td><td>{{server_data.outstanding}}</td></tr>
-  <tr><td>Max Latency</td><td>{{server_data.max_latency}}</td></tr>
-  <tr><td>Avg Latency</td><td>{{server_data.avg_latency}}</td></tr>
-  <tr><td>Min Latency</td><td>{{server_data.min_latency}}</td></tr>
-</table>
-</div>
-<hr/>
-<div class="span-24 last">
-<h2>Connections (clients)</h2>
+          <table class="conn_list">
+            <tr><th>host</th><th>port</th><th>interest ops</th><th>queued#</th><th>recved#</th><th>sent#</th></tr>
+            {% for s in server_data.sessions %}
+            <tr class="{% cycle 'oddrow' 'evenrow' %}"><td>{{s.host}}</td><td>{{s.port}}</td><td>{{s.interest_ops}}</td><td>{{s.queued}}</td><td>{{s.recved}}</td><td>{{s.sent}}</td></tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="environment">
+        <div class="span-24 last">
+          <!-- <h2>Environment</h2> -->
 
-<table class="conn_list">
-  <tr><th>host</th><th>port</th><th>interest ops</th><th>queued#</th><th>recved#</th><th>sent#</th></tr>
-{% for s in server_data.sessions %}
-  <tr class="{% cycle 'oddrow' 'evenrow' %}"><td>{{s.host}}</td><td>{{s.port}}</td><td>{{s.interest_ops}}</td><td>{{s.queued}}</td><td>{{s.recved}}</td><td>{{s.sent}}</td></tr>
-{% endfor %}
-</table>
-</div>
-<hr/>
-<div class="span-24 last">
-<h2>Environment</h2>
-
-<table class="envi_list">
-  <tr><th>Attribute</th><th>Value</th></tr>
-{% for e in server_data.envi %}
-  <tr class="{% cycle 'oddrow' 'evenrow' %}"><td>{{e.0}}</td><td>{{e.1}}</td></tr>
-{% endfor %}
-</table>
-</div>
+          <table class="envi_list">
+            <tr><th>Attribute</th><th>Value</th></tr>
+            {% for e in server_data.envi %}
+            <tr class="{% cycle 'oddrow' 'evenrow' %}"><td>{{e.0}}</td><td>{{e.1}}</td></tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 <hr/>
 </div>
 
